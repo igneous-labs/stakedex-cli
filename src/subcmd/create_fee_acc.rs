@@ -10,7 +10,7 @@ use super::SubcmdExec;
 
 #[derive(Args, Debug)]
 #[command(
-    long_about = "Permissionlessly create the fee account for a xSOL mint. Required to include it into stakedex."
+    long_about = "Permissionlessly create the fee token account for a xSOL mint. Required to include it into stakedex."
 )]
 pub struct CreateFeeAccArgs {
     #[arg(help = "Pubkey of the xSOL mint")]
@@ -39,7 +39,7 @@ impl SubcmdExec for CreateFeeAccArgs {
         let tx = Transaction::new(&vec![payer], msg, blockhash);
 
         println!(
-            "Creating token acc {} of mint {}",
+            "Creating fee token acc {} of mint {}",
             fee_token_account, self.mint
         );
         send_or_sim_tx(args, &client, &tx);
