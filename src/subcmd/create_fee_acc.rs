@@ -1,14 +1,5 @@
-use std::str::FromStr;
-
 use clap::Args;
-use solana_client::rpc_client::RpcClient;
-use solana_sdk::{
-    commitment_config::{CommitmentConfig, CommitmentLevel},
-    message::Message,
-    pubkey::Pubkey,
-    system_program,
-    transaction::Transaction,
-};
+use solana_sdk::{message::Message, pubkey::Pubkey, system_program, transaction::Transaction};
 use stakedex_interface::{
     create_fee_token_account_ix, CreateFeeTokenAccountIxArgs, CreateFeeTokenAccountKeys,
 };
@@ -28,13 +19,9 @@ pub struct CreateFeeAccArgs {
 
 impl SubcmdExec for CreateFeeAccArgs {
     fn process_cmd(&self, args: &crate::Args) {
-        let client = RpcClient::new_with_commitment(
-            &args.config.json_rpc_url,
-            CommitmentConfig {
-                commitment: CommitmentLevel::from_str(&args.config.commitment).unwrap(),
-            },
-        );
-        let payer = args.config.signer().unwrap();
+        let client = args.config.rpc_client();
+        let payer = args.config.signer();
+
         let fee_token_account = find_fee_token_acc(&self.mint);
         let ix = create_fee_token_account_ix(
             CreateFeeTokenAccountKeys {

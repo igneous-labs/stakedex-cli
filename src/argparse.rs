@@ -1,10 +1,14 @@
-use std::{error::Error, io};
+use std::{io, str::FromStr};
 
 use clap2::ArgMatches;
 use derive_more::{AsRef, Deref};
 use solana_clap_utils::keypair::signer_from_path;
 use solana_cli_config::{Config, CONFIG_FILE};
-use solana_sdk::signer::Signer;
+use solana_client::rpc_client::RpcClient;
+use solana_sdk::{
+    commitment_config::{CommitmentConfig, CommitmentLevel},
+    signer::Signer,
+};
 
 /// clap requires arg types to impl Clone, but solana doesnt do it
 #[derive(AsRef, Debug, Deref)]
@@ -23,14 +27,23 @@ impl Clone for ConfigWrapper {
 }
 
 impl ConfigWrapper {
-    pub fn signer(&self) -> Result<Box<dyn Signer>, Box<dyn Error>> {
+    pub fn rpc_client(&self) -> RpcClient {
+        RpcClient::new_with_commitment(
+            &self.json_rpc_url,
+            CommitmentConfig {
+                commitment: CommitmentLevel::from_str(&self.commitment).unwrap(),
+            },
+        )
+    }
+
+    pub fn signer(&self) -> Box<dyn Signer> {
         // Not supporting
         // - SignerSourceKind::Prompt with skip seed phrase validation
         // - SignerSourceKind::Usb with confirm_key
         // - SignerSourceKind::Pubkey
         // See: https://docs.rs/solana-clap-utils/latest/src/solana_clap_utils/keypair.rs.html#752-820
         let empty_argmatches = ArgMatches::default();
-        signer_from_path(&empty_argmatches, &self.0.keypair_path, "wallet", &mut None)
+        signer_from_path(&empty_argmatches, &self.0.keypair_path, "wallet", &mut None).unwrap()
     }
 }
 
