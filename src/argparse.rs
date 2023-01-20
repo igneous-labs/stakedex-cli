@@ -36,7 +36,7 @@ impl ConfigWrapper {
 
 pub fn parse_solana_cli_config_from_path(path: &str) -> Result<ConfigWrapper, io::Error> {
     let p = if path.is_empty() {
-        &CONFIG_FILE.as_ref().ok_or_else(|| {
+        CONFIG_FILE.as_ref().ok_or_else(|| {
             io::Error::new(
                 io::ErrorKind::Other,
                 "Solana CONFIG_FILE could not identify the user's home directory",
