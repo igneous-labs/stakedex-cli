@@ -10,7 +10,7 @@ use solana_sdk::{
     signer::Signer,
 };
 
-/// clap requires arg types to impl Clone, but solana doesnt do it
+/// clap requires arg types to impl Clone, but solana doesnt do it, hence the wrapper
 #[derive(AsRef, Debug, Deref)]
 pub struct ConfigWrapper(Config);
 

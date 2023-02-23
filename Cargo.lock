@@ -3464,9 +3464,13 @@ dependencies = [
 name = "stakedex-cli"
 version = "0.1.0"
 dependencies = [
+ "borsh",
+ "bs58",
  "clap 2.34.0",
  "clap 4.1.1",
  "derive_more",
+ "serde",
+ "serde_json",
  "solana-clap-utils",
  "solana-cli-config",
  "solana-client",
@@ -3478,7 +3482,7 @@ dependencies = [
 [[package]]
 name = "stakedex_interface"
 version = "0.1.0"
-source = "git+https://github.com/igneous-labs/stakedex-sdk?branch=master#8e126d1819d0ce374c8a48a29b5d84d566674d4a"
+source = "git+https://github.com/igneous-labs/stakedex-sdk?branch=feat/record#65b5a21584b3f53d39c14a4dcc0cba482da5ae71"
 dependencies = [
  "borsh",
  "solana-program",

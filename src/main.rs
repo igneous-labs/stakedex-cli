@@ -2,6 +2,7 @@ use clap::{builder::ValueParser, Parser};
 
 mod argparse;
 mod pda;
+mod serde;
 mod subcmd;
 mod tx_utils;
 
