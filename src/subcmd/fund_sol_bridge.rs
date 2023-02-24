@@ -31,7 +31,7 @@ impl SubcmdExec for FundSolBridgeArgs {
                 "{} already has enough ({} lamports >= {} required)",
                 sol_bridge_out, existing, lamports_req
             );
-            return;
+            return; // success
         }
 
         let ix = system_instruction::transfer(&payer.pubkey(), &sol_bridge_out, lamports_req);

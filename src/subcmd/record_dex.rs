@@ -4,6 +4,7 @@ use stakedex_interface::{record_dex_ix, DexRecord, RecordDexIxArgs, RecordDexKey
 use std::{
     fs::File,
     path::{Path, PathBuf},
+    process,
 };
 
 use crate::{pda::find_dex_record, serde::DexRecordSer, tx_utils::send_or_sim_tx};
@@ -25,11 +26,11 @@ impl SubcmdExec for RecordDexArgs {
     fn process_cmd(&self, args: &crate::Args) {
         if self.dexes.is_empty() {
             println!("Provide at least 1 dex");
-            return;
+            process::exit(1);
         }
         if self.dexes.len() > MAX_DEXES_PER_CMD {
             println!("Max {} dexes per cmd", MAX_DEXES_PER_CMD);
-            return;
+            process::exit(1);
         }
 
         let client = args.config.rpc_client();
