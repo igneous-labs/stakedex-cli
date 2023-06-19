@@ -38,11 +38,12 @@ impl ConfigWrapper {
 
     pub fn signer(&self) -> Box<dyn Signer> {
         // Not supporting
-        // - SignerSourceKind::Prompt with skip seed phrase validation
-        // - SignerSourceKind::Usb with confirm_key
-        // - SignerSourceKind::Pubkey
+        // - SignerSourceKind::Prompt with skip seed phrase validation since we dont allow that flag in crate::Args
+        // - SignerSourceKind::Usb with confirm_key since we dont allow that flag in crate::Args
+        // - SignerSourceKind::Pubkey since we dont allow SIGN_ONLY_ARG in crate::Args
         // See: https://docs.rs/solana-clap-utils/latest/src/solana_clap_utils/keypair.rs.html#752-820
         let empty_argmatches = ArgMatches::default();
+        // This throws "Protocol("Unknown error")" if usb://ledger and ledger is not unlocked and on solana app
         signer_from_path(&empty_argmatches, &self.0.keypair_path, "wallet", &mut None).unwrap()
     }
 }
