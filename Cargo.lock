@@ -3492,7 +3492,7 @@ dependencies = [
 [[package]]
 name = "stakedex_interface"
 version = "0.1.0"
-source = "git+https://github.com/igneous-labs/stakedex-sdk?branch=master#8e126d1819d0ce374c8a48a29b5d84d566674d4a"
+source = "git+https://github.com/igneous-labs/stakedex-sdk?branch=master#ace948837fafaec007110c1edea7d624c5d2b094"
 dependencies = [
  "borsh",
  "solana-program",
