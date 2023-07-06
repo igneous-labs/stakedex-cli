@@ -3,8 +3,9 @@ use solana_sdk::{
     message::Message, program_pack::Pack, system_instruction, transaction::Transaction,
 };
 use spl_token::state::Account;
+use stakedex_sdk_common::find_sol_bridge_out;
 
-use crate::{pda::find_sol_bridge_out, tx_utils::send_or_sim_tx};
+use crate::tx_utils::send_or_sim_tx;
 
 use super::SubcmdExec;
 
@@ -19,7 +20,7 @@ impl SubcmdExec for FundSolBridgeArgs {
         let client = args.config.rpc_client();
         let payer = args.config.signer();
 
-        let sol_bridge_out = find_sol_bridge_out();
+        let sol_bridge_out = find_sol_bridge_out().0;
 
         let existing = client.get_balance(&sol_bridge_out).unwrap();
         let lamports_req = client

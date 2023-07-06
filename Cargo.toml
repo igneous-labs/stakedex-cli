@@ -11,10 +11,13 @@ path = "src/main.rs"
 clap = { version = "^4.0", features = ["derive"] }
 clap2 = { package = "clap", version = "^2.0" } # required for solana-clap-utils
 derive_more = "^0.99"
+itertools = "^0.10"
 solana-clap-utils = "^1.9"
 solana-cli-config = "^1.9"
 solana-client = "^1.9"
+solana-program = "^1.9" # ~1.10 stakedex_sdk_common requirement
 solana-remote-wallet = { version = "^1.9", features = ["hidapi"] } # else throws "hidapi crate compilation disabled in solana-remote-wallet."
 solana-sdk = "^1.9"
 spl-token = "^3.0"
 stakedex_interface = { git = "https://github.com/igneous-labs/stakedex-sdk", branch = "master" }
+stakedex_sdk_common = { git = "https://github.com/igneous-labs/stakedex-sdk", branch = "master" }
