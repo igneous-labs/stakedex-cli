@@ -3,8 +3,9 @@ use solana_sdk::{message::Message, pubkey::Pubkey, system_program, transaction::
 use stakedex_interface::{
     create_fee_token_account_ix, CreateFeeTokenAccountIxArgs, CreateFeeTokenAccountKeys,
 };
+use stakedex_sdk_common::find_fee_token_acc;
 
-use crate::{pda::find_fee_token_acc, tx_utils::send_or_sim_tx};
+use crate::tx_utils::send_or_sim_tx;
 
 use super::SubcmdExec;
 
@@ -22,7 +23,7 @@ impl SubcmdExec for CreateFeeAccArgs {
         let client = args.config.rpc_client();
         let payer = args.config.signer();
 
-        let fee_token_account = find_fee_token_acc(&self.mint);
+        let fee_token_account = find_fee_token_acc(&self.mint).0;
         let ix = create_fee_token_account_ix(
             CreateFeeTokenAccountKeys {
                 payer: payer.pubkey(),
