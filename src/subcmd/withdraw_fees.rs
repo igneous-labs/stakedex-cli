@@ -44,7 +44,7 @@ impl SubcmdExec for WithdrawFeesArgs {
         .unwrap();
 
         let ix_data = InstructionData {
-            program_id: spl_token::ID,
+            program_id: ix.program_id,
             accounts: ix
                 .accounts
                 .iter()
