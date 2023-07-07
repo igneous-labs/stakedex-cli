@@ -20,7 +20,7 @@ pub struct WithdrawFeesArgs {
     )]
     pub destination: Option<Pubkey>,
 }
-
+/// TODO: import from stakedex crate when onchain program is made public
 const ADMIN_AUTHORITY: &str = "A7jn1BA6LPHX8Wcmc8t476gjoLCG4PZakww19ZXfFRjX";
 
 impl SubcmdExec for WithdrawFeesArgs {
