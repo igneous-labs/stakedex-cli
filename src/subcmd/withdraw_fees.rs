@@ -1,7 +1,8 @@
 use base64::{engine::general_purpose, Engine};
-use bincode::serialize;
+use borsh::ser::BorshSerialize;
 use clap::Args;
-use solana_sdk::{message::Message, pubkey::Pubkey, transaction::Transaction};
+use solana_sdk::pubkey::Pubkey;
+use spl_governance::state::proposal_transaction::{AccountMetaData, InstructionData};
 use stakedex_interface::{WithdrawFeesIxArgs, WithdrawFeesKeys};
 use stakedex_sdk_common::find_fee_token_acc;
 
@@ -23,9 +24,7 @@ pub struct WithdrawFeesArgs {
 const ADMIN_AUTHORITY: &str = "A7jn1BA6LPHX8Wcmc8t476gjoLCG4PZakww19ZXfFRjX";
 
 impl SubcmdExec for WithdrawFeesArgs {
-    fn process_cmd(&self, args: &crate::Args) {
-        let payer = args.config.signer();
-
+    fn process_cmd(&self, _args: &crate::Args) {
         let mint_token_account = find_fee_token_acc(&self.mint).0;
         let admin = ADMIN_AUTHORITY.parse().unwrap();
         let destination_token_account = self.destination.unwrap_or_else(|| {
@@ -44,15 +43,26 @@ impl SubcmdExec for WithdrawFeesArgs {
         )
         .unwrap();
 
-        let msg = Message::new(&[ix], Some(&payer.pubkey()));
-        let tx = Transaction::new_unsigned(msg);
+        let ix_data = InstructionData {
+            program_id: spl_token::ID,
+            accounts: ix
+                .accounts
+                .iter()
+                .map(|acc| AccountMetaData {
+                    pubkey: acc.pubkey,
+                    is_signer: acc.is_signer,
+                    is_writable: acc.is_writable,
+                })
+                .collect(),
+            data: ix.data,
+        };
 
-        let tx_bytes = serialize(&tx).unwrap();
-        let tx_base64 = general_purpose::STANDARD.encode(tx_bytes);
+        let serialized_data: Vec<u8> = ix_data.try_to_vec().unwrap();
+        let ix_base64 = general_purpose::STANDARD.encode(serialized_data);
 
         println!(
-            "Transaction for withdrawing fees to {}:\n{}",
-            destination_token_account, tx_base64
+            "Instruction for withdrawing fees to {}:\n{}",
+            destination_token_account, ix_base64
         );
     }
 }
