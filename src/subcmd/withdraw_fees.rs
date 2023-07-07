@@ -10,7 +10,7 @@ use super::SubcmdExec;
 
 #[derive(Args, Debug)]
 #[command(
-    long_about = "Outputs a base64-encoded transaction that withdraws fees to the specified token account when signed by the admin authority."
+    long_about = "Outputs a base64-encoded spl-governance program instruction that withdraws fees to the specified token account when executed by the admin authority spl-governance PDA."
 )]
 pub struct WithdrawFeesArgs {
     #[arg(help = "Mint of the token to withdraw fees for.")]
