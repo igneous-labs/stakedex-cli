@@ -3,7 +3,8 @@ use itertools::izip;
 use solana_program::{program_pack::Pack, pubkey::Pubkey};
 use spl_token::amount_to_ui_amount;
 use stakedex_sdk_common::{
-    bsol, cogentsol, daosol, esol, find_fee_token_acc, jitosol, jsol, lainesol, msol, scnsol, stsol,
+    bsol, cogentsol, daosol, esol, find_fee_token_acc, jitosol, jsol, lainesol, msol, risksol,
+    scnsol, stsol,
 };
 
 use super::SubcmdExec;
@@ -47,7 +48,7 @@ impl SubcmdExec for ListFeeAccsArgs {
     }
 }
 
-pub static ALL_XSOL_MINTS: [Pubkey; 11] = [
+pub static ALL_XSOL_MINTS: [Pubkey; 12] = [
     bsol::ID,
     cogentsol::ID,
     daosol::ID,
@@ -56,6 +57,7 @@ pub static ALL_XSOL_MINTS: [Pubkey; 11] = [
     jsol::ID,
     lainesol::ID,
     msol::ID,
+    risksol::ID,
     scnsol::ID,
     spl_token::native_mint::ID,
     stsol::ID,

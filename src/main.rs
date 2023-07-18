@@ -12,7 +12,7 @@ use subcmd::{Subcmd, SubcmdExec};
     author,
     version,
     about,
-    long_about = "Public-facing CLI for the stakedex solana program"
+    long_about = "Admin/public-facing CLI for the stakedex solana program"
 )]
 pub struct Args {
     #[arg(
