@@ -3,6 +3,7 @@ use rusqlite::Connection;
 use rusqlite_migration::{Migrations, M};
 use std::{include_str, path::Path};
 
+pub mod schema;
 pub mod test_utils;
 
 lazy_static! {
@@ -29,11 +30,12 @@ pub mod tests {
         let conn = create_test_db();
 
         conn.execute(
-            "INSERT INTO invocations (sig, signer, ix, amount_in, amount_out, mint_in, mint_out) VALUES (:sig, :signer, :ix, :amount_in, :amount_out, :mint_in, :mint_out)"
+            "INSERT INTO invocations (sig, signer, ix, unix_timestamp, amount_in, amount_out, mint_in, mint_out) VALUES (:sig, :signer, :ix, :unix_timestamp, :amount_in, :amount_out, :mint_in, :mint_out)"
             ,&[
                 (":sig", "abc"),
                 (":signer", "def"),
                 (":ix", "1"),
+                (":unix_timestamp", "0"),
                 (":amount_in", "123"),
                 (":amount_out", "456"),
                 (":mint_in", "ghi"),

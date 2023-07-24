@@ -4,7 +4,7 @@ use clap2::ArgMatches;
 use derive_more::{AsRef, Deref};
 use solana_clap_utils::keypair::signer_from_path;
 use solana_cli_config::{Config, CONFIG_FILE};
-use solana_client::rpc_client::RpcClient;
+use solana_client::{nonblocking, rpc_client::RpcClient};
 use solana_sdk::{
     commitment_config::{CommitmentConfig, CommitmentLevel},
     signer::Signer,
@@ -30,6 +30,15 @@ impl ConfigWrapper {
     pub fn rpc_client(&self) -> RpcClient {
         RpcClient::new_with_commitment(
             &self.json_rpc_url,
+            CommitmentConfig {
+                commitment: CommitmentLevel::from_str(&self.commitment).unwrap(),
+            },
+        )
+    }
+
+    pub fn nonblocking_rpc_client(&self) -> nonblocking::rpc_client::RpcClient {
+        nonblocking::rpc_client::RpcClient::new_with_commitment(
+            self.json_rpc_url.clone(),
             CommitmentConfig {
                 commitment: CommitmentLevel::from_str(&self.commitment).unwrap(),
             },

@@ -1,6 +1,7 @@
 use clap::{builder::ValueParser, Parser};
 
 mod argparse;
+mod global_lut_cache;
 mod subcmd;
 mod tx_utils;
 
