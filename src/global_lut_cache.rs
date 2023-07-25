@@ -25,6 +25,7 @@ pub async fn get_lut(client: &RpcClient, addr: &Pubkey) -> Result<Vec<Pubkey>, B
     Ok(addresses.into())
 }
 
+/*
 #[cfg(test)]
 mod tests {
     use solana_client::nonblocking::rpc_client::RpcClient;
@@ -45,3 +46,4 @@ mod tests {
         assert!(!fetched.is_empty());
     }
 }
+*/

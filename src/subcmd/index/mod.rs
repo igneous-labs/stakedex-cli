@@ -7,6 +7,7 @@ use super::SubcmdExec;
 
 mod consts;
 mod db;
+mod parse;
 
 #[derive(Args, Debug)]
 #[command(
