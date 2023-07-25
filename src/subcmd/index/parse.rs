@@ -9,7 +9,8 @@ use solana_program::{
     pubkey::Pubkey,
 };
 use solana_transaction_status::{
-    EncodedConfirmedTransactionWithStatusMeta, UiTransactionTokenBalance,
+    option_serializer::OptionSerializer, EncodedConfirmedTransactionWithStatusMeta,
+    UiInnerInstructions, UiTransactionTokenBalance,
 };
 
 use crate::global_lut_cache::get_lut;
@@ -100,6 +101,16 @@ pub fn token_balance_of(v: &[UiTransactionTokenBalance], index: u8) -> Option<u6
         }
     }
     None
+}
+
+pub fn inner_instructions_of(
+    ectx: &EncodedConfirmedTransactionWithStatusMeta,
+) -> Option<&[UiInnerInstructions]> {
+    let meta = ectx.transaction.meta.as_ref()?;
+    match meta.inner_instructions.as_ref() {
+        OptionSerializer::Some(v) => Some(v),
+        _ => None,
+    }
 }
 
 #[cfg(test)]

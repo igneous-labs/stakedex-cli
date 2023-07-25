@@ -3828,6 +3828,7 @@ version = "0.1.0"
 dependencies = [
  "base64 0.21.2",
  "borsh 0.9.3",
+ "bs58",
  "clap 2.34.0",
  "clap 4.1.1",
  "derive_more",
