@@ -27,12 +27,16 @@ mod parse;
 )]
 pub struct IndexArgs {
     #[arg(
+        long,
+        short,
         help = "Path to sqlite file to save data to",
         default_value = "stakedex.sqlite"
     )]
     pub sqlite_file: PathBuf,
 
     #[arg(
+        long,
+        short,
         help = "true = index only most recent transactions until latest indexed signature in DB. false = index from earliest indexed signature in DB to start",
         default_value_t = true
     )]
