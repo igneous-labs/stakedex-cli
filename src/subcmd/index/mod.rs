@@ -11,7 +11,7 @@ use tokio::runtime::Runtime;
 
 use self::{
     consts::{FIRST_NON_ADMIN_SIGNATURE_SINCE_PAYER_REMOVED, MAX_SIGNATURES_FOR_ADDRESS_LIMIT},
-    db::{create_conn, earliest_indexed_signature, schema::Invocation},
+    db::{create_conn, earliest_indexed_signature, latest_indexed_signature, schema::Invocation},
     parse::parse_b64_tx,
 };
 
@@ -31,19 +31,28 @@ pub struct IndexArgs {
         default_value = "stakedex.sqlite"
     )]
     pub sqlite_file: PathBuf,
+
+    #[arg(
+        help = "true = index only most recent transactions until latest indexed signature in DB. false = index from earliest indexed signature in DB to start",
+        default_value_t = true
+    )]
+    pub latest_only: bool,
 }
 
 impl SubcmdExec for IndexArgs {
     fn process_cmd(&self, args: &crate::Args) {
         let db = create_conn(&self.sqlite_file);
-        let mut earliest_sig_opt = earliest_indexed_signature(&db).unwrap();
-        let until_sig = Signature::from_str(FIRST_NON_ADMIN_SIGNATURE_SINCE_PAYER_REMOVED).unwrap();
-        if let Some(earliest_sig) = earliest_sig_opt.as_ref() {
-            if earliest_sig == &until_sig {
-                println!("All transactions indexed");
-                return;
-            }
-        }
+        let until_limit_sig =
+            Signature::from_str(FIRST_NON_ADMIN_SIGNATURE_SINCE_PAYER_REMOVED).unwrap();
+        let (mut before_sig_opt, until_sig) = match self.latest_only {
+            true => (
+                None,
+                latest_indexed_signature(&db)
+                    .unwrap()
+                    .unwrap_or(until_limit_sig),
+            ),
+            false => (earliest_indexed_signature(&db).unwrap(), until_limit_sig),
+        };
         let get_transaction_cfg = RpcTransactionConfig {
             encoding: Some(UiTransactionEncoding::Base64),
             commitment: Some(CommitmentConfig::finalized()),
@@ -63,7 +72,7 @@ impl SubcmdExec for IndexArgs {
                     .get_signatures_for_address_with_config(
                         &stakedex_interface::ID,
                         GetConfirmedSignaturesForAddress2Config {
-                            before: earliest_sig_opt,
+                            before: before_sig_opt,
                             until: Some(until_sig),
                             limit: Some(MAX_SIGNATURES_FOR_ADDRESS_LIMIT),
                             commitment: Some(CommitmentConfig::finalized()),
@@ -71,11 +80,15 @@ impl SubcmdExec for IndexArgs {
                     )
                     .await
                     .unwrap();
+                if get_signatures_res.is_empty() {
+                    println!("All transactions indexed");
+                    break;
+                }
                 for RpcConfirmedTransactionStatusWithSignature { signature, err, .. } in
                     get_signatures_res
                 {
                     let signature = Signature::from_str(&signature).unwrap();
-                    earliest_sig_opt.replace(signature);
+                    before_sig_opt.replace(signature);
                     if err.is_none() {
                         let ectx = rpc
                             .get_transaction_with_config(&signature, get_transaction_cfg)

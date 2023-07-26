@@ -41,6 +41,25 @@ pub fn earliest_indexed_signature(conn: &Connection) -> Result<Option<Signature>
     Ok(Some(Signature::from_str(&sig)?))
 }
 
+/// Returns None if db empty
+pub fn latest_indexed_signature(conn: &Connection) -> Result<Option<Signature>, Box<dyn Error>> {
+    let sig: String = match conn.query_row(
+        "SELECT sig FROM invocations ORDER BY slot DESC LIMIT 1",
+        [],
+        |row| row.get(0),
+    ) {
+        Ok(r) => r,
+        Err(e) => {
+            if let rusqlite::Error::QueryReturnedNoRows = e {
+                return Ok(None);
+            } else {
+                return Err(e.into());
+            }
+        }
+    };
+    Ok(Some(Signature::from_str(&sig)?))
+}
+
 #[cfg(test)]
 pub mod tests {
     use super::{test_utils::create_test_db, *};
