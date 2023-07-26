@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS invocations (
     signer TEXT NOT NULL, -- note: not transaction fee payer. stakedex instruction signer (e.g. user of SwapViaStake)
     ix INTEGER NOT NULL, -- instruction discriminant
     unix_timestamp INTEGER NOT NULL, -- block timestamp
+    slot INTEGER NOT NULL, -- block/slot number
     cpi_prog TEXT NOT NULL DEFAULT '', -- program id of program that CPI'd stakedex program. "" if NA
     amount_in INTEGER NOT NULL DEFAULT 0, -- amount of token atomics in, according to instruction data. 0 if NA. Always able to determine from ix data.
     amount_out INTEGER NOT NULL DEFAULT 0, -- amount of token atomics out received by destination token account. 0 if NA or unable to determine.

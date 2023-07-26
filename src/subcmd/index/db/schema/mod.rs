@@ -21,6 +21,7 @@ pub struct Invocation {
     pub signer: String,
     pub ix: u8,
     pub unix_timestamp: i64,
+    pub slot: u64,
     pub cpi_prog: String,
     pub amount_in: u64,
     pub amount_out: u64,
@@ -219,6 +220,7 @@ impl Invocation {
             signer,
             ix,
             unix_timestamp,
+            slot: ectx.slot,
             cpi_prog,
             amount_in,
             amount_out,
@@ -350,6 +352,7 @@ impl Invocation {
             signer: signer.pubkey.to_string(),
             ix,
             unix_timestamp,
+            slot: ectx.slot,
             cpi_prog: "".into(),
             amount_in,
             amount_out,
@@ -360,16 +363,17 @@ impl Invocation {
 
     pub fn save(&self, conn: &Connection) -> rusqlite::Result<()> {
         let mut stmt = conn.prepare_cached(
-            "INSERT INTO invocations
-            (sig, signer, ix, unix_timestamp, cpi_prog, amount_in, amount_out, mint_in, mint_out)
+            "INSERT OR REPLACE INTO invocations
+            (sig, signer, ix, unix_timestamp, slot, cpi_prog, amount_in, amount_out, mint_in, mint_out)
             VALUES
-            (:sig, :signer, :ix, :unix_timestamp, :cpi_prog, :amount_in, :amount_out, :mint_in, :mint_out)"
+            (:sig, :signer, :ix, :unix_timestamp, :slot, :cpi_prog, :amount_in, :amount_out, :mint_in, :mint_out)"
         )?;
         stmt.execute(&[
             (":sig", &self.sig),
             (":signer", &self.signer),
             (":ix", &self.ix.to_string()),
             (":unix_timestamp", &self.unix_timestamp.to_string()),
+            (":slot", &self.slot.to_string()),
             (":cpi_prog", &self.cpi_prog),
             (":amount_in", &self.amount_in.to_string()),
             (":amount_out", &self.amount_out.to_string()),
@@ -423,10 +427,30 @@ mod tests {
             mint_in: native_mint::ID.to_string(),
             mint_out: bsol::ID.to_string(),
             unix_timestamp: 1689827008,
+            slot: 206389107,
             cpi_prog: "".into(),
             amount_in: 2_000_000_000,
             amount_out: 1_869_636_257,
         };
+        eg.save(&conn).unwrap();
+    }
+
+    #[test]
+    fn test_db_replace() {
+        let conn = create_test_db();
+        let eg = Invocation {
+            sig: "2scJfbaU4VbPDiiLqPB9NGT9U6LWXcxNRW2zw2qRNoKUR2UqmeiYJZ18VzmohBMxtrVwyyd6rGPi6VCrRN2SpFrs".into(),
+            signer: STAKE_WRAPPED_SOL_AND_SWAP_VIA_STAKE_SIGNER.into(),
+            ix: STAKE_WRAPPED_SOL_IX_DISCM,
+            mint_in: native_mint::ID.to_string(),
+            mint_out: bsol::ID.to_string(),
+            unix_timestamp: 1689827008,
+            slot: 206389107,
+            cpi_prog: "".into(),
+            amount_in: 2_000_000_000,
+            amount_out: 1_869_636_257,
+        };
+        eg.save(&conn).unwrap();
         eg.save(&conn).unwrap();
     }
 
@@ -440,6 +464,7 @@ mod tests {
             mint_in: native_mint::ID.to_string(),
             mint_out: bsol::ID.to_string(),
             unix_timestamp: 1689827008,
+            slot: 206389107,
             cpi_prog: "".into(),
             amount_in: 2_000_000_000,
             amount_out: 1_869_636_257,
@@ -456,6 +481,7 @@ mod tests {
             mint_in: bsol::ID.to_string(),
             mint_out: jsol::ID.to_string(),
             unix_timestamp: 1689827094,
+            slot: 206389300,
             cpi_prog: "".into(),
             amount_in: 1_500_000_000,
             amount_out: 1_436_050_745,
@@ -472,6 +498,7 @@ mod tests {
             mint_in: jsol::ID.to_string(),
             mint_out: bsol::ID.to_string(),
             unix_timestamp: 1690138252,
+            slot: 207087788,
             cpi_prog: JUP_PROGRAM_ID.into(),
             amount_in: 178_228_451,
             amount_out: 0, // because all bsol output was used to swap into other tokens
@@ -488,6 +515,7 @@ mod tests {
             mint_in: native_mint::ID.to_string(),
             mint_out: cogentsol::ID.to_string(),
             unix_timestamp: 1690292749,
+            slot: 207437136,
             cpi_prog: JUP_PROGRAM_ID.into(),
             amount_in: 24_283_800_000,
             amount_out: 26_094_214_514, // because its a jup split route and more cgntSOL was bought from other routes
