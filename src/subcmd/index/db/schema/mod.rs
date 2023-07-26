@@ -138,10 +138,10 @@ impl Invocation {
                     .accounts
                     .get(2)
                     .ok_or("SwapViaStake no dest_token_to index")?;
-                let dest_token_to_pre = token_balance_of(pre_token_balances, dest_token_to_index)
-                    .ok_or("SwapViaStake no dest_token_to pre")?;
-                let dest_token_to_post = token_balance_of(post_token_balances, dest_token_to_index)
-                    .ok_or("SwapViaStake no dest_token_to post")?;
+                let dest_token_to_pre =
+                    token_balance_of(pre_token_balances, dest_token_to_index).unwrap_or(0);
+                let dest_token_to_post =
+                    token_balance_of(post_token_balances, dest_token_to_index).unwrap_or(0);
                 let amount_out = dest_token_to_post.saturating_sub(dest_token_to_pre);
                 let mint_in_index = *inner_ix_compiled
                     .accounts
@@ -168,10 +168,10 @@ impl Invocation {
                     .accounts
                     .get(2)
                     .ok_or("StakeWrappedSol no dest_token_to index")?;
-                let dest_token_to_pre = token_balance_of(pre_token_balances, dest_token_to_index)
-                    .ok_or("StakeWrappedSol no dest_token_to pre")?;
-                let dest_token_to_post = token_balance_of(post_token_balances, dest_token_to_index)
-                    .ok_or("StakeWrappedSol no dest_token_to post")?;
+                let dest_token_to_pre =
+                    token_balance_of(pre_token_balances, dest_token_to_index).unwrap_or(0);
+                let dest_token_to_post =
+                    token_balance_of(post_token_balances, dest_token_to_index).unwrap_or(0);
                 let amount_out = dest_token_to_post.saturating_sub(dest_token_to_pre);
                 let mint_out_index = *inner_ix_compiled
                     .accounts
@@ -196,11 +196,10 @@ impl Invocation {
                     .accounts
                     .get(2)
                     .ok_or("DepositStake no dest_token_out index")?;
-                let dest_token_out_pre = token_balance_of(pre_token_balances, dest_token_out_index)
-                    .ok_or("DepositStake no dest_token_out pre")?;
+                let dest_token_out_pre =
+                    token_balance_of(pre_token_balances, dest_token_out_index).unwrap_or(0);
                 let dest_token_out_post =
-                    token_balance_of(post_token_balances, dest_token_out_index)
-                        .ok_or("DepositStake no dest_token_out post")?;
+                    token_balance_of(post_token_balances, dest_token_out_index).unwrap_or(0);
                 let amount_out = dest_token_out_post.saturating_sub(dest_token_out_pre);
                 let mint_out_index = *inner_ix_compiled
                     .accounts
@@ -272,10 +271,10 @@ impl Invocation {
                     .ok_or("SwapViaStake no dest_token_to index")?
                     .try_into()
                     .unwrap();
-                let dest_token_to_pre = token_balance_of(pre_token_balances, dest_token_to_index)
-                    .ok_or("SwapViaStake no dest_token_to pre")?;
-                let dest_token_to_post = token_balance_of(post_token_balances, dest_token_to_index)
-                    .ok_or("SwapViaStake no dest_token_to post")?;
+                let dest_token_to_pre =
+                    token_balance_of(pre_token_balances, dest_token_to_index).unwrap_or(0);
+                let dest_token_to_post =
+                    token_balance_of(post_token_balances, dest_token_to_index).unwrap_or(0);
                 let amount_out = dest_token_to_post.saturating_sub(dest_token_to_pre);
                 let mint_in = accounts
                     .get(5)
@@ -300,10 +299,10 @@ impl Invocation {
                     .ok_or("StakeWrappedSol no dest_token_to index")?
                     .try_into()
                     .unwrap();
-                let dest_token_to_pre = token_balance_of(pre_token_balances, dest_token_to_index)
-                    .ok_or("StakeWrappedSol no dest_token_to pre")?;
-                let dest_token_to_post = token_balance_of(post_token_balances, dest_token_to_index)
-                    .ok_or("StakeWrappedSol no dest_token_to post")?;
+                let dest_token_to_pre =
+                    token_balance_of(pre_token_balances, dest_token_to_index).unwrap_or(0);
+                let dest_token_to_post =
+                    token_balance_of(post_token_balances, dest_token_to_index).unwrap_or(0);
                 let amount_out = dest_token_to_post.saturating_sub(dest_token_to_pre);
                 let mint_out = accounts
                     .get(6)
@@ -331,11 +330,10 @@ impl Invocation {
                     .ok_or("DepositStake no dest_token_out index")?
                     .try_into()
                     .unwrap();
-                let dest_token_out_pre = token_balance_of(pre_token_balances, dest_token_out_index)
-                    .ok_or("DepositStake no dest_token_out pre")?;
+                let dest_token_out_pre =
+                    token_balance_of(pre_token_balances, dest_token_out_index).unwrap_or(0);
                 let dest_token_out_post =
-                    token_balance_of(post_token_balances, dest_token_out_index)
-                        .ok_or("DepositStake no dest_token_out post")?;
+                    token_balance_of(post_token_balances, dest_token_out_index).unwrap_or(0);
                 let amount_out = dest_token_out_post.saturating_sub(dest_token_out_pre);
                 let mint_out = accounts
                     .get(4)
