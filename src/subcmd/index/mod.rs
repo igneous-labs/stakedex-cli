@@ -2,8 +2,8 @@ use std::{path::PathBuf, str::FromStr, time::Duration};
 
 use clap::Args;
 use solana_client::{
-    nonblocking::rpc_client::RpcClient, rpc_client::GetConfirmedSignaturesForAddress2Config,
-    rpc_config::RpcTransactionConfig, rpc_response::RpcConfirmedTransactionStatusWithSignature,
+    rpc_client::GetConfirmedSignaturesForAddress2Config, rpc_config::RpcTransactionConfig,
+    rpc_response::RpcConfirmedTransactionStatusWithSignature,
 };
 use solana_sdk::{commitment_config::CommitmentConfig, signature::Signature};
 use solana_transaction_status::UiTransactionEncoding;
@@ -62,7 +62,7 @@ impl SubcmdExec for IndexArgs {
             commitment: Some(CommitmentConfig::finalized()),
             max_supported_transaction_version: Some(0),
         };
-        let rpc = RpcClient::new(args.config.json_rpc_url.clone());
+        let rpc = args.config.nonblocking_rpc_client();
         let rt = Runtime::new().unwrap();
         rt.block_on(async move {
             // TODO: split this into pipelines:
