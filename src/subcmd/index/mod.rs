@@ -38,7 +38,7 @@ pub struct IndexArgs {
         long,
         short,
         help = "true = index only most recent transactions until latest indexed signature in DB. false = index from earliest indexed signature in DB to start",
-        default_value_t = true
+        default_value_t = false
     )]
     pub latest_only: bool,
 }
