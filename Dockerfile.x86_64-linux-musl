@@ -1,0 +1,37 @@
+FROM rust:1.70.0-alpine3.18 as chef
+
+WORKDIR /app
+
+# need musl-dev (libc headers) for solana stuff
+# need hidapi-dev, eudev-dev, linux-headers for solana-remote-wallet hidapi (ledger hardware wallet)
+RUN apk add --no-cache musl-dev hidapi-dev eudev-dev linux-headers
+
+RUN cargo install cargo-chef
+
+
+FROM chef as planner
+
+COPY . .
+
+RUN cargo chef prepare --recipe-path recipe.json
+
+
+FROM chef as builder
+
+COPY --from=planner /app/recipe.json recipe.json
+
+# build and cache deps
+RUN cargo chef cook --release --target x86_64-unknown-linux-musl --recipe-path recipe.json
+
+COPY . .
+
+RUN cargo build --release --target x86_64-unknown-linux-musl --bin stakedex
+
+
+FROM scratch
+
+WORKDIR /
+
+COPY --from=builder /app/target/x86_64-unknown-linux-musl/release/stakedex /stakedex
+
+CMD ["/stakedex"]
