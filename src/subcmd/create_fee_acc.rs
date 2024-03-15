@@ -1,5 +1,8 @@
 use clap::Args;
-use solana_sdk::{message::Message, pubkey::Pubkey, system_program, transaction::Transaction};
+use solana_sdk::{
+    compute_budget::ComputeBudgetInstruction, message::Message, pubkey::Pubkey, system_program,
+    transaction::Transaction,
+};
 use stakedex_interface::{
     create_fee_token_account_ix, CreateFeeTokenAccountIxArgs, CreateFeeTokenAccountKeys,
 };
@@ -35,7 +38,15 @@ impl SubcmdExec for CreateFeeAccArgs {
             CreateFeeTokenAccountIxArgs {},
         )
         .unwrap();
-        let msg = Message::new(&[ix], Some(&payer.pubkey()));
+        let msg = Message::new(
+            &[
+                // TODO: make compute budget dynamic
+                ComputeBudgetInstruction::set_compute_unit_limit(20_000),
+                ComputeBudgetInstruction::set_compute_unit_price(250),
+                ix,
+            ],
+            Some(&payer.pubkey()),
+        );
         let blockhash = client.get_latest_blockhash().unwrap();
         let tx = Transaction::new(&vec![payer], msg, blockhash);
 
