@@ -6,7 +6,9 @@ pub fn send_or_sim_tx(args: &crate::Args, rpc_client: &RpcClient, tx: &Transacti
         let result = rpc_client.simulate_transaction(tx).unwrap();
         println!("Simulate result: {:?}", result);
     } else {
-        let signature = rpc_client.send_transaction(tx).unwrap();
+        let signature = rpc_client
+            .send_and_confirm_transaction_with_spinner(tx)
+            .unwrap();
         println!("Signature: {}", signature);
     }
 }

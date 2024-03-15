@@ -4,12 +4,14 @@ mod create_fee_acc;
 mod fund_sol_bridge;
 mod index;
 mod list_fee_accs;
+mod view_fee_acc;
 mod withdraw_fees;
 
 pub use create_fee_acc::*;
 pub use fund_sol_bridge::*;
 pub use index::*;
 pub use list_fee_accs::*;
+pub use view_fee_acc::*;
 pub use withdraw_fees::*;
 
 #[derive(Debug, Subcommand)]
@@ -19,6 +21,7 @@ pub enum Subcmd {
     Index(IndexArgs),
     ListFeeAccs(ListFeeAccsArgs),
     WithdrawFees(WithdrawFeesArgs),
+    ViewFeeAcc(ViewFeeAccArgs),
 }
 
 pub trait SubcmdExec {
@@ -33,6 +36,7 @@ impl SubcmdExec for Subcmd {
             Self::ListFeeAccs(a) => a.process_cmd(args),
             Self::WithdrawFees(a) => a.process_cmd(args),
             Self::Index(a) => a.process_cmd(args),
+            Self::ViewFeeAcc(a) => a.process_cmd(args),
         }
     }
 }
