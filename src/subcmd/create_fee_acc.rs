@@ -41,7 +41,7 @@ impl SubcmdExec for CreateFeeAccArgs {
         let msg = Message::new(
             &[
                 // TODO: make compute budget dynamic
-                ComputeBudgetInstruction::set_compute_unit_limit(20_000),
+                ComputeBudgetInstruction::set_compute_unit_limit(50_000),
                 ComputeBudgetInstruction::set_compute_unit_price(250),
                 ix,
             ],
