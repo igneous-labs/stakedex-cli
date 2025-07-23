@@ -1,8 +1,5 @@
-use base64::{engine::general_purpose, Engine};
-use borsh::ser::BorshSerialize;
 use clap::Args;
-use solana_sdk::pubkey::Pubkey;
-use spl_governance::state::proposal_transaction::{AccountMetaData, InstructionData};
+use solana_sdk::{pubkey::Pubkey, transaction::Transaction};
 use stakedex_interface::{WithdrawFeesIxArgs, WithdrawFeesKeys};
 use stakedex_sdk_common::find_fee_token_acc;
 
@@ -21,7 +18,7 @@ pub struct WithdrawFeesArgs {
     pub destination: Option<Pubkey>,
 }
 /// TODO: import from stakedex crate when onchain program is made public
-const ADMIN_AUTHORITY: &str = "A7jn1BA6LPHX8Wcmc8t476gjoLCG4PZakww19ZXfFRjX";
+const ADMIN_AUTHORITY: &str = "EeQmNqm1RcQnee8LTyx6ccVG9FnR8TezQuw2JXq2LC1T";
 
 impl SubcmdExec for WithdrawFeesArgs {
     fn process_cmd(&self, _args: &crate::Args) {
@@ -43,26 +40,14 @@ impl SubcmdExec for WithdrawFeesArgs {
         )
         .unwrap();
 
-        let ix_data = InstructionData {
-            program_id: ix.program_id,
-            accounts: ix
-                .accounts
-                .iter()
-                .map(|acc| AccountMetaData {
-                    pubkey: acc.pubkey,
-                    is_signer: acc.is_signer,
-                    is_writable: acc.is_writable,
-                })
-                .collect(),
-            data: ix.data,
-        };
+        let tx = Transaction::new_with_payer(&[ix], None);
 
-        let serialized_data: Vec<u8> = ix_data.try_to_vec().unwrap();
-        let ix_base64 = general_purpose::STANDARD.encode(serialized_data);
+        let serialized_data: Vec<u8> = bincode::serialize(&tx).unwrap();
+        let ix_encoded = bs58::encode(serialized_data).into_string();
 
         println!(
-            "Instruction for withdrawing fees to {}:\n{}",
-            destination_token_account, ix_base64
+            "Tx for withdrawing fees to {}:\n{}",
+            destination_token_account, ix_encoded
         );
     }
 }
